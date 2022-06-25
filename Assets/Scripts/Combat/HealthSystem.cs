@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class HealthSystem
 {
-    public int health;
-    public int healthMax;
+    public float health;
+    public float healthMax;
     public bool isDead = false;
 
     [Space]
@@ -25,7 +25,7 @@ public class HealthSystem
 
     public float GetHealthPercent()
     {
-        return (float)health / (float)healthMax;
+        return health / healthMax;
     }
 
     public void Death()

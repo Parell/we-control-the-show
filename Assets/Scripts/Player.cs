@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IDamageable
 {
-    [SerializeField] private int m_health = 3;
-
+    [SerializeField] private float health = 3;
+    [SerializeField] private float regenRate = 1;
+    [SerializeField] private bool canRegen = false;
+    [Space]
+    [SerializeField] private float healCooldown = 3.0f;
+    [SerializeField] private float maxHealCooldown = 3.0f;
+    [SerializeField] private bool startCooldown = false;
+    [Space]
     [SerializeField] private float hurtTime = 0.1f;
-
     [SerializeField] private CanvasGroup splatterOverlay;
     [SerializeField] private CanvasGroup damageOverlay;
 
@@ -23,8 +28,15 @@ public class Player : MonoBehaviour, IDamageable
 
         healthSystem.OnHealthChanged += healthSystem._OnHealthChanged;
 
-        healthSystem.healthMax = m_health;
+        healthSystem.healthMax = health;
         healthSystem.health = healthSystem.healthMax;
+    }
+
+    void UpdateDamage()
+    {
+        health = healthSystem.health;
+        // add a tartget fade and smooth it
+        splatterOverlay.alpha = 1.0f - healthSystem.GetHealthPercent();
     }
 
     IEnumerator DamageFlash()
@@ -49,17 +61,51 @@ public class Player : MonoBehaviour, IDamageable
         if (healthSystem.health < 0) healthSystem.health = 0;
         if (healthSystem.OnHealthChanged != null) healthSystem.OnHealthChanged(this, EventArgs.Empty);
 
-        m_health = healthSystem.health;
-
         if (healthSystem.isDead)
         {
             //movement.moveDisabledTimer = 3f;
         }
 
-        if (m_health >= 0)
+        if (healthSystem.health >= 0)
         {
-            splatterOverlay.alpha = 1.0f - healthSystem.GetHealthPercent();
+            canRegen = false;
+            healCooldown = maxHealCooldown;
+            startCooldown = true;
             StartCoroutine(DamageFlash());
+            UpdateDamage();
+        }
+    }
+
+    void Update()
+    {
+
+        if (startCooldown)
+        {
+            healCooldown -= Time.deltaTime;
+            if (healCooldown <= 0)
+            {
+                canRegen = true;
+                startCooldown = false;
+            }
+        }
+
+        if (canRegen)
+        {
+            if (healthSystem.health <= healthSystem.healthMax - 0.01f)
+            {
+                healthSystem.health += Time.deltaTime * regenRate;
+                if (healthSystem.OnHealthChanged != null) healthSystem.OnHealthChanged(this, EventArgs.Empty);
+                UpdateDamage();
+            }
+            else
+            {
+                healthSystem.health = healthSystem.healthMax;
+                healCooldown = maxHealCooldown;
+                canRegen = false;
+
+                if (healthSystem.OnHealthChanged != null) healthSystem.OnHealthChanged(this, EventArgs.Empty);
+                UpdateDamage();
+            }
         }
     }
 

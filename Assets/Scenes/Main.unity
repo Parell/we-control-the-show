@@ -237,7 +237,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d6812a99c3732949be1d1cef414df42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_health: 3
+  health: 3
+  regenRate: 1
+  canRegen: 0
+  healCooldown: 3
+  maxHealCooldown: 3
+  startCooldown: 0
   hurtTime: 1
   splatterOverlay: {fileID: 1752685190}
   damageOverlay: {fileID: 1492798594}

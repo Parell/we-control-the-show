@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamageable
 {
-    [SerializeField] private int m_health = 1;
+    [SerializeField] private float health = 1;
 
     HealthSystem healthSystem;
 
@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
         healthSystem.OnHealthChanged += healthSystem._OnHealthChanged;
 
-        healthSystem.healthMax = m_health;
+        healthSystem.healthMax = health;
         healthSystem.health = healthSystem.healthMax;
 
         //Debug.Log(gameObject.name + healthSystem.health);
@@ -28,7 +28,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
         //Debug.Log(gameObject.name + healthSystem.health);
 
-        m_health = healthSystem.health;
+        health = healthSystem.health;
 
         if (healthSystem.isDead)
         {
