@@ -1,16 +1,36 @@
+using System.Collections;
 using UnityEngine;
 
 public class Damager : MonoBehaviour
 {
-    [SerializeField] private int damageAmount;
+    [SerializeField] float damageAmount;
+    [SerializeField] float hitTime = 1f;
+    [SerializeField] int hit;
 
-    private void OnTriggerEnter(Collider collider)
+    IDamageable damageable;
+
+    void OnTriggerEnter(Collider collider)
     {
-        IDamageable damageable = collider.GetComponent<IDamageable>();
+        damageable = collider.GetComponent<IDamageable>();
 
+        if (damageable != null && hit == 1)
+        {
+            StartCoroutine(HitTimer());
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
         if (damageable != null)
         {
-            damageable.Damage(damageAmount);
+            hit++;
         }
+    }
+
+    IEnumerator HitTimer()
+    {
+        damageable.TakeDamage(damageAmount);
+        yield return new WaitForSeconds(hitTime);
+        hit = 0;
     }
 }
