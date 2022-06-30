@@ -4,18 +4,18 @@ using UnityEngine.SceneManagement;
 
 public class UIMenuManager : MonoBehaviour
 {
-    [SerializeField] private int menuScene = 1;
-    [SerializeField] private int sceneToStart = 2;
+    [SerializeField] int menuScene = 1;
+    [SerializeField] int sceneToStart = 2;
     [Space]
-    [SerializeField] private bool isPaused;
-    [SerializeField] private bool inMainMenu = true;
+    [SerializeField] bool isPaused;
+    [SerializeField] bool inMainMenu = true;
     //[Space]
-    //[SerializeField] private int musicToChangeTo = 0;
+    //[SerializeField] int musicToChangeTo = 0;
     [Space]
-    [SerializeField] private GameObject tint;
-    [SerializeField] private GameObject menuMenu;
-    [SerializeField] private GameObject optionsMenu;
-    [SerializeField] private GameObject pauseMenu;
+    [SerializeField] GameObject tint;
+    [SerializeField] GameObject menuMenu;
+    [SerializeField] GameObject optionsMenu;
+    [SerializeField] GameObject pauseMenu;
 
     void Start()
     {
@@ -103,7 +103,7 @@ public class UIMenuManager : MonoBehaviour
         else
         {
             StartCoroutine(LoadManager.Instance.FadeAndLoadScene(LoadManager.FadeDirection.In, menuScene, LoadSceneMode.Single));
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(1f);
             ShowMenu();
             HidePauseMenu();
             UnPause();

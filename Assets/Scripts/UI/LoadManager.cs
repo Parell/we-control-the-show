@@ -10,8 +10,8 @@ public class LoadManager : MonoBehaviour
 
     public int currentScene;
 
-    [SerializeField] private CanvasGroup fadeImage;
-    [SerializeField] private float fadeTime = 0.5f;
+    [SerializeField] CanvasGroup fadeImage;
+    [SerializeField] float fadeTime = 0.5f;
 
     void Awake()
     {
@@ -24,7 +24,7 @@ public class LoadManager : MonoBehaviour
         Instance = this;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
-        fadeImage.alpha = 1;
+        fadeImage.alpha = 1f;
         StartCoroutine(Fade(FadeDirection.Out));
     }
 
@@ -60,7 +60,7 @@ public class LoadManager : MonoBehaviour
     void SetAlpha(ref float alpha, FadeDirection fadeDirection)
     {
         fadeImage.alpha = alpha;
-        alpha += Time.deltaTime * (1.0f / fadeTime) * ((fadeDirection == FadeDirection.Out) ? -1 : 1);
+        alpha += Time.deltaTime * (1f / fadeTime) * ((fadeDirection == FadeDirection.Out) ? -1 : 1);
     }
 
     public void LoadScene(int sceneToLoad, LoadSceneMode loadSceneMode)
@@ -72,7 +72,6 @@ public class LoadManager : MonoBehaviour
     {
         yield return Fade(fadeDirection);
         SceneManager.LoadScene(sceneToLoad, loadSceneMode);
-        yield return Fade(fadeDirection == FadeDirection.In ? FadeDirection.Out : FadeDirection.In );
+        yield return Fade(fadeDirection == FadeDirection.In ? FadeDirection.Out : FadeDirection.In);
     }
 }
- 
