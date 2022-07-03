@@ -7,17 +7,13 @@ public class HealthSystem
     public float health;
     public float healthMax;
 
-    [Space]
-    [SerializeField] Slider healthSlider;
+    public Slider healthSlider;
 
     public Action<object, EventArgs> OnHealthChanged;
 
     public void _OnHealthChanged(object sender, EventArgs e)
     {
-        if (healthSlider != null)
-        {
-            healthSlider.value = GetHealthPercent();
-        }
+        healthSlider.value = GetHealthPercent();
     }
 
     public float GetHealthPercent()

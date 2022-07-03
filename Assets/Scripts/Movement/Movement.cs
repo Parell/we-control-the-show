@@ -8,20 +8,22 @@ public class Movement : MonoBehaviour
     public float moveDisabledTimer = 0;
 
     [Space]
-    [SerializeField] float moveSpeed = 3f;
-    [SerializeField] float moveAcceleration = 10f;
-    [SerializeField] float airMoveAcceleration = 5f;
-    [SerializeField] float turnAcceleration = 10f;
+    [SerializeField] float moveSpeed = 4f;
+    [SerializeField] float airMoveSpeed = 2f;
+    [SerializeField] float moveAcceleration = 15f;
+    [SerializeField] float airMoveAcceleration = 8f;
+    [SerializeField] float turnAcceleration = 15f;
     [SerializeField] Vector3 currentMovement;
 
     [Space]
-    [SerializeField] float gravity = -9.8f;
+    [SerializeField] float gravity = -10f;
     [SerializeField] float groundedGravity = -1f;
+    [SerializeField] float fallMultiplier = 4f;
 
     [Space]
-    [SerializeField] float jumpHeight = 0.35f;
+    [SerializeField] float jumpHeight = 0.4f;
     [SerializeField] float maxFallSpeed = -20f;
-    [SerializeField] bool isJumping = false;
+    //[SerializeField] bool isJumping = false;
     [SerializeField] bool isJumpPressed = false;
 
     [SerializeField] float coyoteTime = 0.2f;
@@ -32,8 +34,8 @@ public class Movement : MonoBehaviour
 
     [Space]
     [SerializeField] bool isDashPressed = false;
-    [SerializeField] float dashLength = 0.1f;
-    [SerializeField] float dashSpeed = 5f;
+    [SerializeField] float dashLength = 0.15f;
+    [SerializeField] float dashSpeed = 2.5f;
     [SerializeField] float dashResetTime = 1f;
 
     Vector3 dashMove;
@@ -77,25 +79,13 @@ public class Movement : MonoBehaviour
     {
         if (axisName == "Mouse X")
         {
-            if (!turnDisabled)
-            {
-                return Input.GetAxis("Mouse X");
-            }
-            else
-            {
-                return 0;
-            }
+            if (!turnDisabled) return Input.GetAxis("Mouse X");
+            else return 0;
         }
         else if (axisName == "Mouse Y")
         {
-            if (!turnDisabled)
-            {
-                return Input.GetAxis("Mouse Y");
-            }
-            else
-            {
-                return 0;
-            }
+            if (!turnDisabled) return Input.GetAxis("Mouse Y");
+            else return 0;
         }
         return Input.GetAxis(axisName);
     }
@@ -115,9 +105,9 @@ public class Movement : MonoBehaviour
             moveDisabledTimer -= Time.deltaTime;
         }
 
-        isDashPressed = Input.GetButton("Dash");
+        isDashPressed = Input.GetButtonDown("Dash");
 
-        if (Input.GetButton("Jump"))
+        if (Input.GetButtonDown("Jump"))
         {
             isJumpPressed = true;
             jumpBufferTimeCounter = jumpBufferTime;
@@ -130,14 +120,15 @@ public class Movement : MonoBehaviour
 
     void HandleMove()
     {
-        goalVelocity = moveDirection * moveSpeed;
 
         if (characterController.isGrounded)
         {
+            goalVelocity = moveDirection * moveSpeed;
             velocity = Vector3.MoveTowards(velocity, goalVelocity, Time.deltaTime * moveAcceleration);
         }
         else
         {
+            goalVelocity = moveDirection * airMoveSpeed;
             velocity = Vector3.MoveTowards(velocity, goalVelocity, Time.deltaTime * airMoveAcceleration);
         }
 
@@ -163,7 +154,6 @@ public class Movement : MonoBehaviour
     void HandleGravity()
     {
         bool isFalling = currentMovement.y <= 0f;
-        float fallMultiplier = 2f;
 
         if (characterController.isGrounded)
         {
@@ -199,14 +189,14 @@ public class Movement : MonoBehaviour
 
         if (jumpBufferTimeCounter > 0f && coyoteTimeCounter > 0f)
         {
-            isJumping = true;
+            //isJumping = true;
             jumpBufferTimeCounter = 0f;
 
             currentMovement.y = jumpVelocity;
         }
         else if (!isJumpPressed && characterController.isGrounded)
         {
-            isJumping = false;
+            //isJumping = false;
 
             coyoteTimeCounter = 0f;
         }
@@ -238,7 +228,7 @@ public class Movement : MonoBehaviour
             dashingTime += Time.deltaTime;
         }
 
-        if (characterController.isGrounded && canDash == false && dashing >= dashLength)
+        if (/*characterController.isGrounded && */canDash == false && dashing >= dashLength)
         {
             canDash = true;
             dashing = 0f;
