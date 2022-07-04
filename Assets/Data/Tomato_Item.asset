@@ -15,5 +15,5 @@ MonoBehaviour:
   ID: 0
   DisplayName: Tomato
   Description: This is a Tomato
-  Icon: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
+  Icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   MaxStackSize: 5
