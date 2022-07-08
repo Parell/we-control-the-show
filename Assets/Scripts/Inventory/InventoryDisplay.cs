@@ -30,13 +30,15 @@ public abstract class InventoryDisplay : MonoBehaviour
 
     public void SlotClicked(UIInventorySlot clickedUISlot)
     {
-        bool isShiftPressed = Input.GetKeyDown(KeyCode.LeftShift);
+        bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
 
         if (clickedUISlot.AssingedInventorySlot.ItemData != null && mouseInventoryItem.AssignedInventorySlot.ItemData == null)
         {
-            if (isShiftPressed)
+            if (isShiftPressed && clickedUISlot.AssingedInventorySlot.SplitStack(out InventorySlot halfStackSlot)) //Split stack
             {
-
+                mouseInventoryItem.UpdateMouseSlot(halfStackSlot);
+                clickedUISlot.UpdateUISlot();
+                return;
             }
             else
             {
@@ -52,6 +54,7 @@ public abstract class InventoryDisplay : MonoBehaviour
             clickedUISlot.UpdateUISlot();
 
             mouseInventoryItem.ClearSlot();
+            return;
         }
 
         if (clickedUISlot.AssingedInventorySlot.ItemData != null && mouseInventoryItem.AssignedInventorySlot.ItemData != null)
@@ -77,11 +80,13 @@ public abstract class InventoryDisplay : MonoBehaviour
                     var newItem = new InventorySlot(mouseInventoryItem.AssignedInventorySlot.ItemData, remainingOnMouse);
                     mouseInventoryItem.ClearSlot();
                     mouseInventoryItem.UpdateMouseSlot(newItem);
+                    return;
                 }
             }
             else if (!isSameItem)
             {
                 SwapSlots(clickedUISlot);
+                return;
             }
         }
     }

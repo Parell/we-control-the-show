@@ -64,9 +64,8 @@ public class Player : MonoBehaviour, IDamageable
 
         if (healthSystem.health <= 0f)
         {
-            movement.moveDisabled = true;
-            movement.turnDisabled = true;
-
+            SystemManager.Instance.isCameraLocked = true;
+            SystemManager.Instance.isMovementLocked = true;
             canRegen = false;
             startCooldown = false;
         }

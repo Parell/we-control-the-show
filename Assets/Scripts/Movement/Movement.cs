@@ -1,10 +1,7 @@
 using UnityEngine;
-using Cinemachine;
 
 public class Movement : MonoBehaviour
 {
-    public bool turnDisabled = false;
-    public bool moveDisabled = false;
     public float moveDisabledTimer = 0;
 
     [Space]
@@ -58,7 +55,6 @@ public class Movement : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
-        CinemachineCore.GetInputAxis = HandleCamera;
     }
 
     void Update()
@@ -75,21 +71,6 @@ public class Movement : MonoBehaviour
         HandleDash();
     }
 
-    float HandleCamera(string axisName)
-    {
-        if (axisName == "Mouse X")
-        {
-            if (!turnDisabled) return Input.GetAxis("Mouse X");
-            else return 0;
-        }
-        else if (axisName == "Mouse Y")
-        {
-            if (!turnDisabled) return Input.GetAxis("Mouse Y");
-            else return 0;
-        }
-        return Input.GetAxis(axisName);
-    }
-
     void HandleInputs()
     {
         float horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -98,7 +79,7 @@ public class Movement : MonoBehaviour
         moveDirection = new Vector3(horizontalInput, 0, verticalInput);
         moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
 
-        if (moveDisabled || moveDisabledTimer > 0f)
+        if (SystemManager.Instance.isMovementLocked || moveDisabledTimer > 0f)
         {
             isJumpPressed = false;
             moveDirection = Vector3.zero;

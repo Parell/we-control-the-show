@@ -4,11 +4,11 @@ using UnityEngine.SceneManagement;
 
 public class UIMenuManager : MonoBehaviour
 {
+    public static UIMenuManager Instance;
+
     [SerializeField] int menuScene = 1;
     [SerializeField] int sceneToStart = 2;
     [Space]
-    [SerializeField] bool isPaused;
-    [SerializeField] bool inMainMenu = true;
     //[Space]
     //[SerializeField] int musicToChangeTo = 0;
     [Space]
@@ -19,16 +19,17 @@ public class UIMenuManager : MonoBehaviour
 
     void Start()
     {
+        Instance = this;
         LoadManager.Instance.LoadScene(menuScene, LoadSceneMode.Single);
     }
 
     void Update()
     {
-        if (Input.GetButtonDown("Cancel") && !isPaused && !inMainMenu)
+        if (Input.GetButtonDown("Cancel") && !SystemManager.Instance.isPaused && LoadManager.Instance.currentScene != 1)
         {
             Pause();
         }
-        else if (Input.GetButtonDown("Cancel") && isPaused && !inMainMenu)
+        else if (Input.GetButtonDown("Cancel") && SystemManager.Instance.isPaused && LoadManager.Instance.currentScene != 1)
         {
             UnPause();
         }
@@ -36,14 +37,18 @@ public class UIMenuManager : MonoBehaviour
 
     public void Pause()
     {
-        isPaused = true;
+        SystemManager.Instance.isPaused = true;
+        SystemManager.Instance.isCameraLocked = true;
+        SystemManager.Instance.isMovementLocked = true;
 
         ShowPauseMenu();
     }
 
     public void UnPause()
     {
-        isPaused = false;
+        SystemManager.Instance.isPaused = false;
+        SystemManager.Instance.isCameraLocked = false;
+        SystemManager.Instance.isMovementLocked = false;
 
         HidePauseMenu();
     }
@@ -88,16 +93,17 @@ public class UIMenuManager : MonoBehaviour
     //     playMusic.PlaySelectedMusic(musicToChangeTo);
     // }
 
-    public void StartStopGame()
+    public void StartAndStopGame()
     {
-        StartCoroutine(OnStartStopGame());
+        StartCoroutine(OnStartAndStopGame());
     }
 
-    IEnumerator OnStartStopGame()
+    IEnumerator OnStartAndStopGame()
     {
-        if (inMainMenu)
+        if (LoadManager.Instance.currentScene == 1)
         {
             StartCoroutine(LoadManager.Instance.FadeAndLoadScene(LoadManager.FadeDirection.In, sceneToStart, LoadSceneMode.Single));
+            yield return new WaitForSeconds(1f);
             HideMenu();
         }
         else
@@ -108,8 +114,6 @@ public class UIMenuManager : MonoBehaviour
             HidePauseMenu();
             UnPause();
         }
-
-        inMainMenu = !inMainMenu;
     }
 
     public void Quit()
@@ -121,7 +125,6 @@ public class UIMenuManager : MonoBehaviour
     {
         yield return LoadManager.Instance.Fade(LoadManager.FadeDirection.In);
 
-        Debug.Log("Quit application");
 #if UNITY_STANDALONE
         Application.Quit();
 #endif
