@@ -21,9 +21,9 @@ public class ItemPickUp : MonoBehaviour
 
         if (!inventory) return;
 
-        if (inventory.InventorySystem.AddToInventory(ItemData, 1))
+        if (inventory.PrimaryInventorySystem.AddToInventory(ItemData, 1))
         {
-            //Pop animation and sound?
+            // Todo: Pick up animation and sound?
             Destroy(gameObject);
         }
     }

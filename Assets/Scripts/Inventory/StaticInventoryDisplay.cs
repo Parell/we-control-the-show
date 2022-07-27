@@ -13,13 +13,14 @@ public class StaticInventoryDisplay : InventoryDisplay
 
         if (inventoryHolder != null)
         {
-            inventorySystem = inventoryHolder.InventorySystem;
+            inventorySystem = inventoryHolder.PrimaryInventorySystem;
             inventorySystem.OnInventorySlotChanged += UpdateSlot;
         }
         else Debug.LogWarning($"No inventory assigned to {this.gameObject}");
 
         AssignSlot(inventorySystem);
     }
+
     public override void AssignSlot(InventorySystem invToDisplay)
     {
         slotDictionary = new Dictionary<UIInventorySlot, InventorySlot>();

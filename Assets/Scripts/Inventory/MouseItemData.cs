@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MouseItemData : MonoBehaviour //Make into singleton
+// Todo: Make into singleton
+public class MouseItemData : MonoBehaviour
 {
     public Image ItemSprite;
     public Text ItemCount;
@@ -26,13 +27,15 @@ public class MouseItemData : MonoBehaviour //Make into singleton
 
     void Update()
     {
-        if (AssignedInventorySlot.ItemData != null)
+        // Todo: Add controller support
+        if (AssignedInventorySlot.ItemData != null) // If has item, then follow the mouse
         {
             transform.position = Input.mousePosition;
 
             if (Input.GetMouseButtonDown(0) && !IsMouseOverUI())
             {
                 ClearSlot();
+                // Todo: Drop item on the ground
             }
         }
     }

@@ -19,11 +19,11 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] CanvasGroup damageOverlay;
 
     HealthSystem healthSystem;
-    Movement movement;
+    PlayerMovement movement;
 
     private void Start()
     {
-        movement = GetComponent<Movement>();
+        movement = GetComponent<PlayerMovement>();
 
         healthSystem = new HealthSystem();
 
@@ -64,8 +64,8 @@ public class Player : MonoBehaviour, IDamageable
 
         if (healthSystem.health <= 0f)
         {
-            SystemManager.Instance.isCameraLocked = true;
-            SystemManager.Instance.isMovementLocked = true;
+            //SystemManager.Instance.isCameraLocked = true;
+            //SystemManager.Instance.isMovementLocked = true;
             canRegen = false;
             startCooldown = false;
         }
