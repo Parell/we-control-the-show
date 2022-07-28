@@ -17,11 +17,11 @@ public class ItemPickUp : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
-        var inventory = collider.transform.GetComponent<InventoryHolder>();
+        var inventory = collider.transform.GetComponent<PlayerInventoryHolder>();
 
         if (!inventory) return;
 
-        if (inventory.PrimaryInventorySystem.AddToInventory(ItemData, 1))
+        if (inventory.AddToInventory(ItemData, 1))
         {
             // Todo: Pick up animation and sound?
             Destroy(gameObject);

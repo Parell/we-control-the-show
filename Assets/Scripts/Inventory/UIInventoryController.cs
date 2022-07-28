@@ -4,35 +4,49 @@ using UnityEngine;
 
 public class UIInventoryController : MonoBehaviour
 {
-    public DynamicInventoryDisplay inventoryPanel;
+    public DynamicInventoryDisplay chestPanel;
+    public DynamicInventoryDisplay playerBackpackPanel;
 
     void Awake()
     {
-        inventoryPanel.gameObject.SetActive(false);
+        chestPanel.gameObject.SetActive(false);
+        playerBackpackPanel.gameObject.SetActive(false);
     }
 
     void OnEnable()
     {
         InventoryHolder.OnDynamicInventoryDisplayRequested += DisplayInventory;
+        PlayerInventoryHolder.OnPlayerBackpackDisplayRequested += DisplayPlayerBackpack;
     }
 
     void OnDisable()
     {
-
         InventoryHolder.OnDynamicInventoryDisplayRequested -= DisplayInventory;
+        PlayerInventoryHolder.OnPlayerBackpackDisplayRequested -= DisplayPlayerBackpack;
     }
 
     void Update()
     {
-        if (inventoryPanel.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Escape))
+        if (chestPanel.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Escape))
         {
-            inventoryPanel.gameObject.SetActive(false);
+            chestPanel.gameObject.SetActive(false);
+        }
+
+        if (playerBackpackPanel.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Escape))
+        {
+            playerBackpackPanel.gameObject.SetActive(false);
         }
     }
 
     void DisplayInventory(InventorySystem invToDisplay)
     {
-        inventoryPanel.gameObject.SetActive(true);
-        inventoryPanel.RefreshDynamicInventory(invToDisplay);
+        chestPanel.gameObject.SetActive(true);
+        chestPanel.RefreshDynamicInventory(invToDisplay);
+    }
+
+    void DisplayPlayerBackpack(InventorySystem invToDisplay)
+    {
+        playerBackpackPanel.gameObject.SetActive(true);
+        playerBackpackPanel.RefreshDynamicInventory(invToDisplay);
     }
 }
