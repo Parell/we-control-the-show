@@ -5,8 +5,8 @@ public class Damager : MonoBehaviour
 {
     [SerializeField] float damageAmount;
     [SerializeField] float hitTime = 1f;
-    [SerializeField] int hit;
 
+    int hit;
     IDamageable damageable;
 
     void OnTriggerEnter(Collider collider)

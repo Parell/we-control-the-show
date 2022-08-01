@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -21,7 +20,7 @@ public class Player : MonoBehaviour, IDamageable
     HealthSystem healthSystem;
     PlayerMovement movement;
 
-    private void Start()
+    void Start()
     {
         movement = GetComponent<PlayerMovement>();
 

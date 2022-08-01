@@ -1,169 +1,163 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
-using SaveSystem;
 
 public class SettingsManager : MonoBehaviour
 {
-    [SerializeField] Dropdown resolutionDropdown;
-    [SerializeField] Toggle fullscreenToggle;
-    [SerializeField] Toggle vsyncToggle;
-    [SerializeField] Slider masterSlider;
-    [SerializeField] Slider musicSlider;
-    [SerializeField] Slider effectsSlider;
+    [SerializeField] Dropdown _resolutionDropdown;
+    [SerializeField] Toggle _fullscreenToggle;
+    [SerializeField] Toggle _vsyncToggle;
+    [SerializeField] Slider _masterSlider;
+    [SerializeField] Slider _musicSlider;
+    [SerializeField] Slider _effectsSlider;
     [Space]
-    [SerializeField] AudioMixer audioMixer;
+    [SerializeField] AudioMixer _audioMixer;
+    [SerializeField] List<Resolution> _resolutions;
 
-    public List<Resolution> resolutions;
+    string directory = "/Saves/";
+    string fileName = "Settings.cfg";
+    string path;
+    SettingsData settingsData;
 
-    SettingsData data = new SettingsData();
-
-    void Start()
+    void Awake()
     {
-        ResetResolution();
+        settingsData = new SettingsData();
 
-        Load();
+        GUIUtility.systemCopyBuffer = Application.persistentDataPath;
 
-        resolutionDropdown.onValueChanged.AddListener(Resolution);
-        fullscreenToggle.onValueChanged.AddListener(Fullscreen);
-        vsyncToggle.onValueChanged.AddListener(Vsync);
+        path = Application.persistentDataPath + directory;
 
-        masterSlider.onValueChanged.AddListener(MasterVolume);
-        musicSlider.onValueChanged.AddListener(MusicVolume);
-        effectsSlider.onValueChanged.AddListener(EffectsVolume);
+        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+        SetResolutionDropdown();
+
+        _resolutionDropdown.onValueChanged.AddListener(SetResolution);
+        _fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+        _vsyncToggle.onValueChanged.AddListener(SetVsync);
+        _masterSlider.onValueChanged.AddListener(SetMasterVolume);
+        _musicSlider.onValueChanged.AddListener(SetMusicVolume);
+        _effectsSlider.onValueChanged.AddListener(SetEffectsVolume);
+
+        LoadSettings();
     }
 
-    #region Settings UI
-    void ResetResolution()
+    #region Settings
+    void SetResolutionDropdown()
     {
         int selected = 0;
-        bool foundResolution = false;
+        var options = new List<Dropdown.OptionData>();
 
-        for (int i = 0; i < resolutions.Count; i++)
+        for (int i = 0; i < _resolutions.Count; i++)
         {
-            if (Screen.width == resolutions[i].width && Screen.height == resolutions[i].height)
+            if (Screen.width == _resolutions[i].width && Screen.height == _resolutions[i].height)
             {
-                foundResolution = true;
-
                 selected = i;
             }
-        }
+            else
+            {
+                Resolution newResolution = new Resolution();
+                newResolution.width = Screen.width;
+                newResolution.height = Screen.height;
 
-        if (!foundResolution)
-        {
-            Resolution newResolution = new Resolution();
-            newResolution.width = Screen.width;
-            newResolution.height = Screen.height;
+                _resolutions.Add(newResolution);
+                selected = _resolutions.Count - 1;
+            }
 
-            resolutions.Add(newResolution);
-            selected = resolutions.Count - 1;
-        }
-
-        var options = new List<Dropdown.OptionData>();
-        foreach (var res in resolutions)
-        {
-            string text = res.width + "x" + res.height;
+            string text = _resolutions[i].width + "x" + _resolutions[i].height;
 
             options.Add(new Dropdown.OptionData(text));
         }
-        resolutionDropdown.options = options;
 
-        resolutionDropdown.value = selected;
+        _resolutionDropdown.options = options;
+        _resolutionDropdown.value = selected;
     }
-    #endregion
 
-    #region Settings
-    public void Resolution(int value)
+    public void SetResolution(int value)
     {
-        var resolution = resolutions[value];
-        Screen.SetResolution((int)resolution.width, (int)resolution.height, fullscreenToggle.isOn);
+        var resolution = _resolutions[value];
+        Screen.SetResolution(resolution.width, resolution.height, _fullscreenToggle.isOn);
     }
 
-    public void Fullscreen(bool value)
+    public void SetFullscreen(bool value)
     {
         Screen.fullScreen = value;
-        Resolution(resolutionDropdown.value);
+        SetResolution(_resolutionDropdown.value);
     }
 
-    public void Vsync(bool value)
+    public void SetVsync(bool value)
     {
-        if (!value) { QualitySettings.vSyncCount = 0; }
-        else { QualitySettings.vSyncCount = 1; }
+        if (!value) QualitySettings.vSyncCount = 0;
+        else QualitySettings.vSyncCount = 1;
     }
 
-    public void MasterVolume(float volume)
+    public void SetMasterVolume(float value)
     {
-        audioMixer.SetFloat("MasterVolume", Mathf.Log10(volume) * 20);
+        _audioMixer.SetFloat("MasterVolume", Mathf.Log10(value) * 20);
     }
 
-    public void MusicVolume(float volume)
+    public void SetMusicVolume(float value)
     {
-        audioMixer.SetFloat("MusicVolume", Mathf.Log10(volume) * 20);
+        _audioMixer.SetFloat("MusicVolume", Mathf.Log10(value) * 20);
     }
 
-    public void EffectsVolume(float volume)
+    public void SetEffectsVolume(float value)
     {
-        audioMixer.SetFloat("EffectsVolume", Mathf.Log10(volume) * 20);
+        _audioMixer.SetFloat("EffectsVolume", Mathf.Log10(value) * 20);
     }
     #endregion
 
-    #region Save and Load
-
-    public void RestoreDefaultSettings()
+    public void RestoreSettings()
     {
-        data.resolution = 3;
-        data.fullscreen = false;
-        data.vsync = true;
-        data.master = 1;
-        data.music = 1;
-        data.effects = 1;
-        Debug.Log("reset");
+        settingsData.resolution = 3;
+        settingsData.fullscreen = false;
+        settingsData.vsync = true;
+        settingsData.masterVolume = 1;
+        settingsData.musicVolume = 1;
+        settingsData.effectsVolume = 1;
+
+        Debug.Log("Restoring data");
     }
 
-    public void Load()
+    void LoadSettings()
     {
-        if (SaveGame.Exists("settings")) data = SaveGame.Load<SettingsData>("settings");
-        else RestoreDefaultSettings();
+        if (File.Exists(path + fileName))
+        {
+            string json = File.ReadAllText(path + fileName);
+            settingsData = JsonUtility.FromJson<SettingsData>(json);
 
-        masterSlider.value = data.master;
-        MasterVolume(data.master);
+            Debug.Log("Loading data");
+        }
+        else RestoreSettings();
 
-        musicSlider.value = data.music;
-        MusicVolume(data.music);
-
-        effectsSlider.value = data.effects;
-        EffectsVolume(data.effects);
-
-        fullscreenToggle.isOn = data.fullscreen;
-        Fullscreen(data.fullscreen);
-
-        vsyncToggle.isOn = data.vsync;
-        Vsync(data.vsync);
-
-        resolutionDropdown.value = data.resolution;
-        Resolution(data.resolution);
-        Debug.Log("load");
+        _resolutionDropdown.value = settingsData.resolution;
+        _fullscreenToggle.isOn = settingsData.fullscreen;
+        _vsyncToggle.isOn = settingsData.vsync;
+        _masterSlider.value = settingsData.masterVolume;
+        _musicSlider.value = settingsData.musicVolume;
+        _effectsSlider.value = settingsData.effectsVolume;
     }
 
-    public void Save()
+    public void SaveSettings()
     {
-        data.resolution = resolutionDropdown.value;
-        data.fullscreen = fullscreenToggle.isOn;
-        data.vsync = vsyncToggle.isOn;
-        data.master = masterSlider.value;
-        data.music = musicSlider.value;
-        data.effects = effectsSlider.value;
+        settingsData.resolution = _resolutionDropdown.value;
+        settingsData.fullscreen = _fullscreenToggle.isOn;
+        settingsData.vsync = _vsyncToggle.isOn;
+        settingsData.masterVolume = _masterSlider.value;
+        settingsData.musicVolume = _musicSlider.value;
+        settingsData.effectsVolume = _effectsSlider.value;
 
-        SaveGame.Save<SettingsData>("settings", data);
-        Debug.Log("save");
+        string json = JsonUtility.ToJson(settingsData, true);
+        File.WriteAllText(path + fileName, json);
+
+        Debug.Log("Saving data");
     }
 
     void OnApplicationQuit()
     {
-        Save();
+        SaveSettings();
     }
-    #endregion
 }
 
 [System.Serializable]
@@ -176,5 +170,5 @@ public class SettingsData
 {
     public int resolution;
     public bool fullscreen, vsync;
-    public float master, music, effects;
+    public float masterVolume, musicVolume, effectsVolume;
 }

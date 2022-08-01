@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using System.Linq;
 
 [System.Serializable]
 public class InventorySystem
@@ -56,7 +55,7 @@ public class InventorySystem
     public bool ContainsItem(InventoryItemData itemToAdd, out List<InventorySlot> invSlot) // Do any slots have the item to add
     {
         invSlot = InventorySlots.Where(i => i.ItemData == itemToAdd).ToList(); // Gets a list of all the slots
-        return invSlot == null ? false : true; 
+        return invSlot == null ? false : true;
     }
 
     public bool HasFreeSlot(out InventorySlot freeSlot)

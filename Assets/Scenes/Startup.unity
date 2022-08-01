@@ -5435,7 +5435,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 2002690229}
         m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
-        m_MethodName: Save
+        m_MethodName: SaveSettings
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6683,19 +6683,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 2002690223}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6f1abab00936574dbcb27b274573558, type: 3}
+  m_Script: {fileID: 11500000, guid: a7080b32172e52d4e88a700612805c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolutionDropdown: {fileID: 1713949038}
-  fullscreenToggle: {fileID: 1171821225}
-  vsyncToggle: {fileID: 1815999012}
-  masterSlider: {fileID: 8209340}
-  musicSlider: {fileID: 1408692088}
-  effectsSlider: {fileID: 1976363182}
-  audioMixer: {fileID: 24100000, guid: bf05944abdae4da4ca52b6d1047ab2aa, type: 2}
-  resolutions:
-  - width: 1600
-    height: 900
+  _resolutionDropdown: {fileID: 1713949038}
+  _fullscreenToggle: {fileID: 1171821225}
+  _vsyncToggle: {fileID: 1815999012}
+  _masterSlider: {fileID: 8209340}
+  _musicSlider: {fileID: 1408692088}
+  _effectsSlider: {fileID: 1976363182}
+  _audioMixer: {fileID: 24100000, guid: bf05944abdae4da4ca52b6d1047ab2aa, type: 2}
+  _resolutions:
   - width: 2560
     height: 1440
 --- !u!114 &2002690230
